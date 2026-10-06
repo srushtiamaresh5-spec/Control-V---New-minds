@@ -1,1 +1,32 @@
-input api output 
+import streamlit as st
+import google.generativeai as genai
+
+# 1. Setup the AI Brain (Configure your API Key)
+# Get a free API key from Google AI Studio
+genai.configure(api_key="YOUR_GEMINI_API_KEY")
+model = genai.GenerativeModel('gemini-pro')
+
+# 2. Build the Web Interface Automatically
+st.title("📋 SmartV — Context-Aware AI Clipboard")
+st.caption("Pasting the future into reality.")
+
+# 3. User Inputs
+source_content = st.text_area("1. Paste your raw text, code, or ideas here:", height=150)
+target_context = st.text_input("2. Where are you pasting this? (e.g., 'Into a Python script', 'An email to my boss')", placeholder="Type context here...")
+
+# 4. The Magic Button
+if st.button("Smart Paste ✨"):
+    if source_content and target_context:
+        with st.spinner("Analyzing context and morphing content..."):
+            
+            # Crafting the instruction for the AI
+            prompt = f"Take the following content:\n'{source_content}'\n\nAdapt, format, and rewrite it perfectly so it matches this specific destination context: '{target_context}'. Return only the finalized, ready-to-use output."
+            
+            # Send to AI
+            response = model.generate_content(prompt)
+            
+            # Show the result
+            st.success("Morphed and Ready to Use!")
+            st.code(response.text)
+    else:
+        st.error("Please fill in both fields first!")
